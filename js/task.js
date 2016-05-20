@@ -22,16 +22,20 @@ class TaskBox extends React.Component{
     this.setState({data:this.state.data});
   }
 
-  edtAtividade(){
-    console.log('teste edit');
+  edtAtividade(i){
+    var task = this.state.data[i];
+  }
+
+  taskSelecionada(i){
+    var taskSel = this.state.data[i];
   }
 
   render(){
     return (
       <div>
         <h1>Cadastro de Atividades</h1>
-        <TaskBoxTable data = {this.state.data} rmAtividade = {this.rmAtividade} edtAtividade = {this.edtAtividade}/>
-        <TaskBoxForm addAtividade = {this.addAtividade} />
+        <TaskBoxTable data = {this.state.data} rmAtividade = {this.rmAtividade} />
+        <TaskBoxForm addAtividade = {this.addAtividade} form = {this.taskSelecionada} />
       </div>
     )
   }
@@ -44,10 +48,15 @@ class TaskBoxTable extends React.Component{
   constructor(props){
     super(props);
     this.rmAtividade = this.rmAtividade.bind(this);
+    this.edtAtividade = this.edtAtividade.bind(this);
   }
 
   rmAtividade(id){
     this.props.rmAtividade(id)
+  }
+
+  edtAtividade(){
+    this.props.edtAtividade();
   }
 
   render(){
@@ -60,7 +69,8 @@ class TaskBoxTable extends React.Component{
           name = {data.name}
           key = {data.id}
           atividade = {data.atividade}
-          onClick = {that.rmAtividade}/>
+          rmAtividade = {that.rmAtividade}
+          edtAtividade = {that.edtAtividade}/>
       )
     });
     return(
@@ -91,8 +101,8 @@ class TaskBoxTableRows extends React.Component{
         <th>{this.props.name}</th>
         <th>{this.props.atividade}</th>
         <th>
-          <button onClick = {this.props.onClick.bind(this, this.props.id)}>Apagar</button>
-          <button onClick = {this.props.onClick.bind(this, this.props.id)}>Editar</button>
+          <button onClick = {this.props.rmAtividade.bind(this, this.props.id)}>Apagar</button>
+          <button onClick = {this.props.edtAtividade.bind(this, this.props.id)}>Editar</button>
         </th>
       </tr>
     )
@@ -105,26 +115,25 @@ class TaskBoxForm extends React.Component{
     this.handleNameChange = this.handleNameChange.bind(this);
     this.handleAtividadeChange = this.handleAtividadeChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
-    this.state = {name:'', atividade:''};
   }
 
   handleNameChange(e){
-    this.setState({name:e.target.value})
+    this.props.form.name = e.target.value;
   }
 
   handleAtividadeChange(e){
-    this.setState({atividade:e.target.value})
+    this.props.form.atividade = e.target.value;
   }
 
   onSubmit(e){
     e.preventDefault();
-    var nome = this.state.name;
-    var atividade = this.state.atividade;
+    var nome = this.props.form.name;
+    var atividade = this.props.form.atividade;
     this.props.addAtividade({name:nome, atividade:atividade});
-    this.state = {name:'', atividade:''};
   }
 
   render(){
+    console.log(this.props);
     return(
       <form onSubmit = {this.onSubmit}>
         <label>Nome: </label>
@@ -132,7 +141,7 @@ class TaskBoxForm extends React.Component{
           name="name"
           type="text"
           placeholder="Insira aqui"
-          value = {this.state.name}
+          defaultValue = {this.props.form.name}
           onChange= {this.handleNameChange}/>
 
         <label>Atividade: </label>
@@ -140,7 +149,7 @@ class TaskBoxForm extends React.Component{
           name="atividade"
           type="text"
           placeholder="Insira aqui"
-          value = {this.state.atividade}
+          defaultValue = {this.props.form.atividade}
           onChange= {this.handleAtividadeChange}/>
         <button name="buttonSubmit" type="submit">OK</button>
       </form>
