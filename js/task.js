@@ -15,10 +15,21 @@ class TaskBox extends React.Component{
   }
 
   addAtividade(task){
-     var tasks = this.state.data;
-     task.id = Date.now();
-     var newTasks = tasks.concat([task]);
-     this.setState({data:newTasks});
+    if(this.state.editing !== 0){
+      for (var i in this.state.data) {
+        if(this.state.data[i].id === this.state.editing){
+            this.state.data[i].name = task.name;
+            this.state.data[i].atividade = task.atividade;
+            this.state.editing = 0;
+            this.setState({data:this.state.data});
+        }
+      }
+    }else{
+      var tasks = this.state.data;
+      task.id = Date.now();
+      var newTasks = tasks.concat([task]);
+      this.setState({data:newTasks});
+    }
    }
 
   rmAtividade(id){
@@ -34,18 +45,23 @@ class TaskBox extends React.Component{
     var newState = updateState(this.state, {
       form: {[data]: {$set: e.target.value}}
     });
+
     this.setState(newState);
   }
 
-  setTaskEditing(id){
-
-  }
   render(){
     return (
       <div>
         <h1>Cadastro de Atividades</h1>
-        <TaskBoxTable data = {this.state.data} rmAtividade = {this.rmAtividade} edtAtividade = {this.edtAtividade}/>
-        <TaskBoxForm addAtividade = {this.addAtividade} form = {this.state.form} handlerEdit = {this.handlerEdit}/>
+        <TaskBoxTable
+          data = {this.state.data}
+          rmAtividade = {this.rmAtividade}
+          edtAtividade = {this.edtAtividade}/>
+
+        <TaskBoxForm
+          addAtividade = {this.addAtividade}
+          form = {this.state.form}
+          handlerEdit = {this.handlerEdit}/>
       </div>
     )
   }
@@ -123,18 +139,7 @@ class TaskBoxTableRows extends React.Component{
 class TaskBoxForm extends React.Component{
   constructor(props){
     super(props);
-    this.handleNameChange = this.handleNameChange.bind(this);
-    this.handleAtividadeChange = this.handleAtividadeChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
-    // this.state = {form:{name:'', atividade:''}};
-  }
-
-  handleNameChange(e){
-    // this.setState({form:{name:e.target.value}})
-  }
-
-  handleAtividadeChange(e){
-    // this.setState({form:{atividade:e.target.value}})
   }
 
   onSubmit(e){
@@ -142,6 +147,8 @@ class TaskBoxForm extends React.Component{
     var nome = this.props.form.name;
     var atividade = this.props.form.atividade;
     this.props.addAtividade({name:nome, atividade:atividade});
+    this.props.form.name = '';
+    this.props.form.atividade = '';
   }
 
   render(){
@@ -167,7 +174,6 @@ class TaskBoxForm extends React.Component{
       </form>
     )
   }
-
 };
 
 ReactDOM.render(<TaskBox />,
