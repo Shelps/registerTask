@@ -19,7 +19,7 @@ class TaskBox extends React.Component{
      task.id = Date.now();
      var newTasks = tasks.concat([task]);
      this.setState({data:newTasks});
-  }
+   }
 
   rmAtividade(id){
     this.state.data.splice(id, 1);
@@ -71,10 +71,10 @@ class TaskBoxTable extends React.Component{
 
   render(){
     var that = this;
-    console.log(this.props);
     this.Task = this.props.data.map(function(data, i){
       return(
         <TaskBoxTableRows
+          i = {i}
           task = {data}
           id = {data.id}
           name = {data.name}
@@ -112,7 +112,7 @@ class TaskBoxTableRows extends React.Component{
         <th>{this.props.name}</th>
         <th>{this.props.atividade}</th>
         <th>
-          <button onClick = {this.props.rmAtividade.bind(this, this.props.id)}>Apagar</button>
+          <button onClick = {this.props.rmAtividade.bind(this, this.props.i)}>Apagar</button>
           <button onClick = {this.props.edtAtividade.bind(this, this.props.task)}>Editar</button>
         </th>
       </tr>
@@ -130,7 +130,6 @@ class TaskBoxForm extends React.Component{
   }
 
   handleNameChange(e){
-    console.log(e);
     // this.setState({form:{name:e.target.value}})
   }
 
@@ -146,7 +145,6 @@ class TaskBoxForm extends React.Component{
   }
 
   render(){
-    console.log(this.props.form,'form');
     return(
       <form onSubmit = {this.onSubmit}>
         <label>Nome: </label>
